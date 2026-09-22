@@ -1,0 +1,338 @@
+{
+  "dataset_version": "1.0",
+  "questions": [
+    {
+      "id": "q-001",
+      "question": "What is the annual leave allowance for full-time employees?",
+      "expected_answer": "Employees receive 25 annual leave days.",
+      "expected_source_documents": ["11111111-1111-1111-1111-111111111111"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["25", "days", "annual", "leave"]
+    },
+    {
+      "id": "q-002",
+      "question": "How many paid sick leave days do employees get?",
+      "expected_answer": "Sick leave is capped at 10 paid days per year.",
+      "expected_source_documents": ["11111111-1111-1111-1111-111111111111"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["10", "sick", "leave"]
+    },
+    {
+      "id": "q-003",
+      "question": "What are the office hours at NexusAI?",
+      "expected_answer": "NexusAI office hours are from 9:00 AM to 5:00 PM.",
+      "expected_source_documents": ["11111111-1111-1111-1111-111111111111"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["9:00", "5:00", "hours"]
+    },
+    {
+      "id": "q-004",
+      "question": "What is the dress code?",
+      "expected_answer": "Dress code is smart casual.",
+      "expected_source_documents": ["11111111-1111-1111-1111-111111111111"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["smart", "casual"]
+    },
+    {
+      "id": "q-005",
+      "question": "How much is the Standard HMO deductible?",
+      "expected_answer": "Standard HMO has a deductible of 500 dollars per individual.",
+      "expected_source_documents": ["22222222-2222-2222-2222-222222222222"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["500", "deductible", "HMO"]
+    },
+    {
+      "id": "q-006",
+      "question": "What is the monthly gym reimbursement benefit?",
+      "expected_answer": "Employees can claim up to 75 dollars per month for gym membership reimbursement.",
+      "expected_source_documents": ["22222222-2222-2222-2222-222222222222"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["75", "gym", "reimbursement"]
+    },
+    {
+      "id": "q-007",
+      "question": "What is the lodging reimbursement cap per night?",
+      "expected_answer": "Lodging reimbursement is capped at 200 dollars per night.",
+      "expected_source_documents": ["22222222-2222-2222-2222-222222222222"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["200", "lodging", "night"]
+    },
+    {
+      "id": "q-008",
+      "question": "How often must passwords be rotated?",
+      "expected_answer": "Passwords must be rotated every 90 days.",
+      "expected_source_documents": ["33333333-3333-3333-3333-333333333333"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["90", "days", "rotated"]
+    },
+    {
+      "id": "q-009",
+      "question": "Where should suspicious phishing emails be forwarded?",
+      "expected_answer": "Suspicious emails must be forwarded to security@nexusai.com.",
+      "expected_source_documents": ["33333333-3333-3333-3333-333333333333"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["security@nexusai.com", "forwarded"]
+    },
+    {
+      "id": "q-010",
+      "question": "Within how many minutes will IT isolate systems in a security incident?",
+      "expected_answer": "IT will verify and isolate systems within 15 minutes.",
+      "expected_source_documents": ["33333333-3333-3333-3333-333333333333"],
+      "category": "direct_answer",
+      "expected_behavior": null,
+      "keywords": ["15", "minutes", "isolate"]
+    },
+    {
+      "id": "q-011",
+      "question": "What are the flex-time hours and attendance log rules?",
+      "expected_answer": "Flex-time allows starting between 7:30 AM and 10:00 AM, and attendance logs must be signed weekly.",
+      "expected_source_documents": ["11111111-1111-1111-1111-111111111111"],
+      "category": "multi_part",
+      "expected_behavior": null,
+      "keywords": ["7:30", "10:00", "attendance", "logs"]
+    },
+    {
+      "id": "q-012",
+      "question": "What is the parental leave duration and who qualifies?",
+      "expected_answer": "Parental leave is 12 weeks fully paid for primary caregivers.",
+      "expected_source_documents": ["11111111-1111-1111-1111-111111111111"],
+      "category": "multi_part",
+      "expected_behavior": null,
+      "keywords": ["12", "weeks", "primary", "caregivers"]
+    },
+    {
+      "id": "q-013",
+      "question": "What is the hybrid remote work allowance and monthly stipend?",
+      "expected_answer": "Employees can work remotely up to 2 days per week, and the home office stipend is 50 dollars per month.",
+      "expected_source_documents": ["11111111-1111-1111-1111-111111111111"],
+      "category": "multi_part",
+      "expected_behavior": null,
+      "keywords": ["2", "remote", "50", "stipend"]
+    },
+    {
+      "id": "q-014",
+      "question": "What is the wellness program checkup bonus and gym reimbursement cap?",
+      "expected_answer": "Checkups reward with a 100 dollar annual bonus, and gym reimbursement is up to 75 dollars per month.",
+      "expected_source_documents": ["22222222-2222-2222-2222-222222222222"],
+      "category": "multi_part",
+      "expected_behavior": null,
+      "keywords": ["100", "wellness", "bonus", "75", "gym"]
+    },
+    {
+      "id": "q-015",
+      "question": "What is the 401k match percentage and the vesting period?",
+      "expected_answer": "NexusAI matches 100% of contributions up to 4% of salary, and the vesting period is 2 years.",
+      "expected_source_documents": ["22222222-2222-2222-2222-222222222222"],
+      "category": "multi_part",
+      "expected_behavior": null,
+      "keywords": ["100%", "4%", "vesting", "2", "years"]
+    },
+    {
+      "id": "q-016",
+      "question": "What are the password complexity requirements for character count and MFA?",
+      "expected_answer": "Passwords must be at least 12 characters, and Multi-Factor Authentication is mandatory.",
+      "expected_source_documents": ["33333333-3333-3333-3333-333333333333"],
+      "category": "multi_part",
+      "expected_behavior": null,
+      "keywords": ["12", "characters", "MFA", "mandatory"]
+    },
+    {
+      "id": "q-017",
+      "question": "What are the three data classifications and rules for client data?",
+      "expected_answer": "Data is classified as Public, Internal, or Confidential. Client personal data access is restricted to a need-to-know basis.",
+      "expected_source_documents": ["33333333-3333-3333-3333-333333333333"],
+      "category": "multi_part",
+      "expected_behavior": null,
+      "keywords": ["public", "internal", "confidential", "need-to-know"]
+    },
+    {
+      "id": "q-018",
+      "question": "What are the home office bandwidth requirements and password rotation cycles?",
+      "expected_answer": "Required bandwidth is 50 Mbps download, and passwords must be rotated every 90 days.",
+      "expected_source_documents": [
+        "11111111-1111-1111-1111-111111111111",
+        "33333333-3333-3333-3333-333333333333"
+      ],
+      "category": "cross_document",
+      "expected_behavior": null,
+      "keywords": ["50", "Mbps", "90", "days"]
+    },
+    {
+      "id": "q-019",
+      "question": "What is the annual leave allowance and the 401k vesting period?",
+      "expected_answer": "Annual leave is 25 days, and the 401k vesting period is 2 years.",
+      "expected_source_documents": [
+        "11111111-1111-1111-1111-111111111111",
+        "22222222-2222-2222-2222-222222222222"
+      ],
+      "category": "cross_document",
+      "expected_behavior": null,
+      "keywords": ["25", "days", "2", "years"]
+    },
+    {
+      "id": "q-020",
+      "question": "What are the receipt requirements for travel reimbursement and password length rules?",
+      "expected_answer": "Reimbursement requires receipts for expenses above 25 dollars, and passwords must be at least 12 characters.",
+      "expected_source_documents": [
+        "22222222-2222-2222-2222-222222222222",
+        "33333333-3333-3333-3333-333333333333"
+      ],
+      "category": "cross_document",
+      "expected_behavior": null,
+      "keywords": ["25", "dollars", "12", "characters"]
+    },
+    {
+      "id": "q-021",
+      "question": "What is the hybrid remote work policy and standard HMO deductible?",
+      "expected_answer": "Remote work is allowed up to 2 days per week, and Standard HMO deductible is 500 dollars.",
+      "expected_source_documents": [
+        "11111111-1111-1111-1111-111111111111",
+        "22222222-2222-2222-2222-222222222222"
+      ],
+      "category": "cross_document",
+      "expected_behavior": null,
+      "keywords": ["2", "days", "500", "deductible"]
+    },
+    {
+      "id": "q-022",
+      "question": "How do flex-time schedules relate to password complexity policies?",
+      "expected_answer": "Flex-time allows starting from 7:30 AM to 10:00 AM, and password length must be at least 12 characters.",
+      "expected_source_documents": [
+        "11111111-1111-1111-1111-111111111111",
+        "33333333-3333-3333-3333-333333333333"
+      ],
+      "category": "cross_document",
+      "expected_behavior": null,
+      "keywords": ["7:30", "10:00", "12", "characters"]
+    },
+    {
+      "id": "q-023",
+      "question": "What is the gym reimbursement cap and incident response isolation time?",
+      "expected_answer": "Reimbursement is up to 75 dollars per month, and incident isolation takes 15 minutes.",
+      "expected_source_documents": [
+        "22222222-2222-2222-2222-222222222222",
+        "33333333-3333-3333-3333-333333333333"
+      ],
+      "category": "cross_document",
+      "expected_behavior": null,
+      "keywords": ["75", "dollars", "15", "minutes"]
+    },
+    {
+      "id": "q-024",
+      "question": "What is the policy for holiday bonuses in December?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "unanswerable",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-025",
+      "question": "How can employees request a corporate credit card?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "unanswerable",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-026",
+      "question": "What is the company policy on relocation costs?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "unanswerable",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-027",
+      "question": "How do employees sign up for parking permits?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "unanswerable",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-028",
+      "question": "What is the retirement health insurance subsidy?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "unanswerable",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-029",
+      "question": "How do engineers request access to AWS production accounts?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "unanswerable",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-030",
+      "question": "Does Vivek Shinde know programming language Go?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "hallucination_check",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-031",
+      "question": "Are part-time employees allowed to work hybrid 4 days per week?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "hallucination_check",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-032",
+      "question": "Does employee travel reimbursement require receipts for any expense above 10 dollars?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "hallucination_check",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-033",
+      "question": "Does the Standard HMO plan have a deductible of 100 dollars?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "hallucination_check",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-034",
+      "question": "Must passwords be rotated every 30 days?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "hallucination_check",
+      "expected_behavior": "fallback",
+      "keywords": []
+    },
+    {
+      "id": "q-035",
+      "question": "Can primary caregivers take 24 weeks of parental leave?",
+      "expected_answer": null,
+      "expected_source_documents": [],
+      "category": "hallucination_check",
+      "expected_behavior": "fallback",
+      "keywords": []
+    }
+  ]
+}

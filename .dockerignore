@@ -1,0 +1,32 @@
+# Environment & Virtual Environment
+.env
+.venv/
+env/
+venv/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Application Runtime Data & Logs
+data/
+logs/
+
+# Development & Git Metadata
+.git/
+.gitignore
+implementation_plan*
+scratch/
+
+# IDE & Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS / Misc Files
+.DS_Store
+Thumbs.db
