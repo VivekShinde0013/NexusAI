@@ -1,4 +1,4 @@
-import fitz  # PyMuPDF
+import pymupdf as fitz
 import docx
 from docx.text.paragraph import Paragraph
 from docx.table import Table

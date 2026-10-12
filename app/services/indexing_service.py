@@ -34,4 +34,12 @@ def index_chunks(document_id: str, chunks: List[Chunk]) -> int:
     store.add_chunks(valid_chunks, embeddings)
     store.save(settings.get_vector_store_path())
 
+    # 5. Sync metadata status to indexed if metadata exists
+    try:
+        from app.services import metadata_service
+        if metadata_service.get_metadata(document_id):
+            metadata_service.update_status(document_id, "indexed")
+    except Exception:
+        pass
+
     return len(valid_chunks)

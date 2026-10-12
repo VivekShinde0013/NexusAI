@@ -172,7 +172,6 @@ class LLMService:
 
         raise ValueError(f"Unsupported LLM provider: {self.provider}")
 
-
 def get_llm_service() -> LLMService:
     settings = get_settings()
     if settings.LLM_PROVIDER == "gemini":

@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     LLM_API_URL: str = "https://api.openai.com/v1/chat/completions"
     LLM_TEMPERATURE: float = 0.0
     LLM_RELEVANCE_THRESHOLD: float = 0.4
+    DOCUMENT_SCOPED_RELEVANCE_THRESHOLD: float = 0.25
     LLM_HIGH_CONFIDENCE_THRESHOLD: float = 0.6
 
     # CORS configurations

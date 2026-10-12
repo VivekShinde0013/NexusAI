@@ -281,3 +281,68 @@ def test_repeated_indexing_duplicate_prevention(temp_vector_dir):
     client.post(f"/documents/{doc_a_id}/index")
     # Verify count is replaced (not added/duplicated)
     assert store.count() == initial_count
+
+
+def test_document_id_consistency_lifecycle(temp_vector_dir):
+    """Verifies that upload -> index -> FAISS -> list -> query preserves exact canonical document ID."""
+    txt_path = temp_vector_dir / "raw" / "canonical_cv.txt"
+    txt_path.parent.mkdir(parents=True, exist_ok=True)
+    txt_path.write_text("Vivek Shinde knows Python, Java, JavaScript, C++, C, SQL, TypeScript", encoding="utf-8")
+
+    # 1. Upload creates canonical ID
+    with open(txt_path, "rb") as f:
+        up_resp = client.post("/documents/upload", files={"file": ("canonical_cv.txt", f, "text/plain")})
+    assert up_resp.status_code == 200
+    canonical_id = up_resp.json()["document_id"]
+    assert canonical_id
+
+    # 2. Index preserves exact canonical ID
+    idx_resp = client.post(f"/documents/{canonical_id}/index")
+    assert idx_resp.status_code == 200
+    assert idx_resp.json()["document_id"] == canonical_id
+
+    # 3. FAISS chunks use exact same document ID
+    store = get_vector_store()
+    matching_chunks = [c for c in store.chunks if c.document_id == canonical_id]
+    assert len(matching_chunks) > 0
+    for chunk in matching_chunks:
+        assert chunk.document_id == canonical_id
+        assert chunk.chunk_id.startswith(canonical_id)
+
+    # 4. Documents API returns exact same ID and indexed status
+    list_resp = client.get("/documents")
+    assert list_resp.status_code == 200
+    matching_docs = [d for d in list_resp.json() if d["document_id"] == canonical_id]
+    assert len(matching_docs) == 1
+    assert matching_docs[0]["status"] == "indexed"
+
+    # 5. Document-scoped retrieval using returned ID finds indexed chunks
+    chat_resp = client.post("/chat/query", json={
+        "query": "which programming languages vivek knows",
+        "document_ids": [canonical_id],
+        "top_k": 5
+    })
+    assert chat_resp.status_code == 200
+    chat_data = chat_resp.json()
+    assert "answer" in chat_data
+
+
+def test_unindexed_document_cannot_be_queried(temp_vector_dir):
+    """Verifies that an unindexed document (status: uploaded) cannot silently behave as a valid chat query target."""
+    txt_path = temp_vector_dir / "raw" / "unindexed_doc.txt"
+    txt_path.parent.mkdir(parents=True, exist_ok=True)
+    txt_path.write_text("Unindexed content that is not in FAISS.", encoding="utf-8")
+
+    with open(txt_path, "rb") as f:
+        up_resp = client.post("/documents/upload", files={"file": ("unindexed_doc.txt", f, "text/plain")})
+    unindexed_id = up_resp.json()["document_id"]
+
+    # Chat query attempting to scope to unindexed document -> returns 400 Bad Request
+    chat_resp = client.post("/chat/query", json={
+        "query": "test query",
+        "document_ids": [unindexed_id],
+        "top_k": 5
+    })
+    assert chat_resp.status_code == 400
+    assert "not indexed" in chat_resp.json()["detail"].lower()
+

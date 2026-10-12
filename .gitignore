@@ -142,3 +142,24 @@ cython_debug/
 data/
 logs/
 implementation_plan*
+
+# Next.js frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/coverage/
+frontend/.vercel/
+
+# Environment and secret files
+.env.*
+!.env.example
+frontend/.env*
+!frontend/.env.example
+
+# Local tooling and OS files
+.DS_Store
+Thumbs.db
+
+# TypeScript build cache
+frontend/tsconfig.tsbuildinfo

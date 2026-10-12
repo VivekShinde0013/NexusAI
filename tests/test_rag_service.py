@@ -252,3 +252,145 @@ def test_mock_rag_does_not_invent_absent_facts():
         assert "JavaScript" in data["answer"]
         assert "C++" in data["answer"]
 
+
+def test_document_scoped_relevance_threshold_success():
+    mock_chunk = Chunk(
+        chunk_id="doc-1-c0",
+        document_id="08f5e00e-5422-4eae-b99f-9684ce94f40e",
+        source_filename="statement.pdf",
+        text="Credit transaction 35,000.00 on 18/11/2025.",
+        chunk_index=0,
+        block_type="page",
+    )
+
+    with patch("app.services.vector_store.VectorStore.search") as mock_search, \
+         patch("app.services.metadata_service.get_metadata") as mock_meta, \
+         patch("app.services.llm_service.LLMService.generate_answer", return_value="Verified credits answer") as mock_gen:
+
+        mock_search.return_value = [(mock_chunk, 0.3640)]
+        mock_meta.return_value = {
+            "document_id": "08f5e00e-5422-4eae-b99f-9684ce94f40e",
+            "original_filename": "statement.pdf",
+            "status": "indexed"
+        }
+
+        # Document-scoped query
+        payload = {
+            "query": "give me all credits info from 01-04-2025 to 01-12-2025",
+            "top_k": 5,
+            "document_ids": ["08f5e00e-5422-4eae-b99f-9684ce94f40e"],
+        }
+        resp = client.post("/chat/query", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+
+        # LLMService SHOULD be called (0.3640 >= 0.25)
+        mock_gen.assert_called_once()
+        assert data["answer"] == "Verified credits answer"
+        assert len(data["sources"]) == 1
+        assert data["sources"][0]["score"] == 0.3640
+
+
+def test_global_query_below_threshold_falls_back():
+    mock_chunk = Chunk(
+        chunk_id="doc-1-c0",
+        document_id="doc-1",
+        source_filename="statement.pdf",
+        text="Credit transaction details.",
+        chunk_index=0,
+        block_type="page",
+    )
+
+    with patch("app.services.vector_store.VectorStore.search") as mock_search, \
+         patch("app.services.llm_service.LLMService.generate_answer") as mock_gen:
+
+        mock_search.return_value = [(mock_chunk, 0.3640)]
+
+        # Global query (no document_ids)
+        payload = {
+            "query": "give me all credits info",
+            "top_k": 5,
+        }
+        resp = client.post("/chat/query", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+
+        # LLMService should NOT be called (0.3640 < 0.40)
+        mock_gen.assert_not_called()
+        assert data["answer"] == "I could not find information about this in the provided documents."
+        assert data["confidence"] == "low"
+
+
+def test_document_scoped_query_below_scoped_threshold_falls_back():
+    mock_chunk = Chunk(
+        chunk_id="doc-1-c0",
+        document_id="08f5e00e-5422-4eae-b99f-9684ce94f40e",
+        source_filename="statement.pdf",
+        text="Unrelated text.",
+        chunk_index=0,
+        block_type="page",
+    )
+
+    with patch("app.services.vector_store.VectorStore.search") as mock_search, \
+         patch("app.services.metadata_service.get_metadata") as mock_meta, \
+         patch("app.services.llm_service.LLMService.generate_answer") as mock_gen:
+
+        mock_search.return_value = [(mock_chunk, 0.20)]
+        mock_meta.return_value = {
+            "document_id": "08f5e00e-5422-4eae-b99f-9684ce94f40e",
+            "original_filename": "statement.pdf",
+            "status": "indexed"
+        }
+
+        payload = {
+            "query": "unrelated query",
+            "top_k": 5,
+            "document_ids": ["08f5e00e-5422-4eae-b99f-9684ce94f40e"],
+        }
+        resp = client.post("/chat/query", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+
+        # Score 0.20 < 0.25 (scoped threshold), falls back
+        mock_gen.assert_not_called()
+        assert data["answer"] == "I could not find information about this in the provided documents."
+        assert data["confidence"] == "low"
+
+
+def test_empty_document_ids_uses_global_threshold():
+    mock_chunk = Chunk(
+        chunk_id="doc-1-c0",
+        document_id="doc-1",
+        source_filename="doc.txt",
+        text="Text sample.",
+        chunk_index=0,
+        block_type="paragraph",
+    )
+
+    with patch("app.services.vector_store.VectorStore.search") as mock_search, \
+         patch("app.services.llm_service.LLMService.generate_answer") as mock_gen:
+
+        mock_search.return_value = [(mock_chunk, 0.3640)]
+
+        # Empty document_ids list
+        payload = {
+            "query": "test query",
+            "top_k": 5,
+            "document_ids": [],
+        }
+        resp = client.post("/chat/query", json=payload)
+        assert resp.status_code == 200
+        data = resp.json()
+
+        # Empty document_ids list must be treated as global query (score 0.3640 < 0.40)
+        mock_gen.assert_not_called()
+        assert data["confidence"] == "low"
+
+
+def test_document_scoped_threshold_env_override(monkeypatch):
+    monkeypatch.setenv("DOCUMENT_SCOPED_RELEVANCE_THRESHOLD", "0.15")
+    get_settings.cache_clear()
+    settings = get_settings()
+    assert settings.DOCUMENT_SCOPED_RELEVANCE_THRESHOLD == 0.15
+
+

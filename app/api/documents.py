@@ -397,7 +397,7 @@ async def search_endpoint(
         # Deduplicate
         unique_doc_ids = list(dict.fromkeys(request.document_ids))
 
-        # Validate existence
+        # Validate existence & indexed status
         from app.services import metadata_service
         for doc_id in unique_doc_ids:
             meta = metadata_service.get_metadata(doc_id)
@@ -405,6 +405,11 @@ async def search_endpoint(
                 raise HTTPException(
                     status_code=404,
                     detail=f"Document metadata not found for filter: '{doc_id}'."
+                )
+            if meta.get("status") != "indexed":
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Document '{doc_id}' is not indexed. Only indexed documents can be searched."
                 )
 
     # 2. Get services

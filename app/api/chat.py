@@ -50,7 +50,7 @@ async def chat_query_endpoint(
         # Deduplicate
         unique_doc_ids = list(dict.fromkeys(request.document_ids))
 
-        # Validate existence
+        # Validate existence & indexed status
         from app.services import metadata_service
         for doc_id in unique_doc_ids:
             meta = metadata_service.get_metadata(doc_id)
@@ -58,6 +58,11 @@ async def chat_query_endpoint(
                 raise HTTPException(
                     status_code=404,
                     detail=f"Document metadata not found for filter: '{doc_id}'."
+                )
+            if meta.get("status") != "indexed":
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Document '{doc_id}' is not indexed. Only indexed documents can be queried."
                 )
 
     # 2. Get services
@@ -88,14 +93,19 @@ async def chat_query_endpoint(
             status_code=500, detail=f"Failed to generate query embedding: {str(e)}"
         )
 
-    # 4. Perform search retrieval
+    # 4. Determine effective threshold & perform search retrieval
+    if unique_doc_ids:
+        effective_threshold = settings.DOCUMENT_SCOPED_RELEVANCE_THRESHOLD
+    else:
+        effective_threshold = settings.LLM_RELEVANCE_THRESHOLD
+
     start_search = time.perf_counter()
     try:
         search_results = store.search(query_vector, request.top_k, document_ids=unique_doc_ids)
         trace_ctx.record_retrieval(
             (time.perf_counter() - start_search) * 1000.0,
             search_results,
-            settings.LLM_RELEVANCE_THRESHOLD
+            effective_threshold
         )
     except Exception as e:
         trace_ctx.record_error(str(e))
@@ -105,12 +115,12 @@ async def chat_query_endpoint(
         )
 
     # 5. Hallucination Protection & Filtering
-    # Check if any chunk score is above relevance threshold
+    # Check if any chunk score is above effective relevance threshold
     highest_score = 0.0
     if search_results:
         highest_score = max(score for _, score in search_results)
 
-    if highest_score < settings.LLM_RELEVANCE_THRESHOLD:
+    if highest_score < effective_threshold:
         # Skip calling LLM completely
         trace_ctx.record_llm(0.0, 0, 0, 0, True)
         trace_data = trace_ctx.finalize_and_log()
@@ -126,7 +136,7 @@ async def chat_query_endpoint(
     # 6. Source Deduplication (keep highest score per chunk_id)
     seen_chunks = {}
     for chunk, score in search_results:
-        if score < settings.LLM_RELEVANCE_THRESHOLD:
+        if score < effective_threshold:
             continue
         cid = chunk.chunk_id
         if cid not in seen_chunks or score > seen_chunks[cid][1]:
