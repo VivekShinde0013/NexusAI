@@ -1,6 +1,7 @@
+from huggingface_hub.inference._generated.types import zero_shot_image_classification
+from huggingface_hub.inference._generated.types import zero_shot_image_classification
 import numpy as np
 from typing import List
-from sentence_transformers import SentenceTransformer
 from app.config import get_settings
 
 
@@ -14,10 +15,14 @@ class EmbeddingService:
     def model(self):
         if self._model is None:
             try:
+            # Load the heavy ML dependency only when embeddings are needed.
+                from sentence_transformers import SentenceTransformer
+
                 self._model = SentenceTransformer(self.model_name)
             except Exception as e:
                 raise ValueError(
-                    f"Failed to load sentence-transformers model '{self.model_name}': {str(e)}"
+                    f"Failed to load sentence-transformers model "
+                    f"'{self.model_name}': {str(e)}"
                 )
         return self._model
 
