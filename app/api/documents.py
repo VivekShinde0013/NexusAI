@@ -1,4 +1,5 @@
 import uuid
+from starlette.concurrency import run_in_threadpool
 from typing import Optional
 from pydantic import BaseModel
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
@@ -12,7 +13,6 @@ from app.services.document_service import (
 
 router = APIRouter()
 search_router = APIRouter()
-
 
 
 @router.post("/upload")
@@ -332,7 +332,9 @@ async def index_document_endpoint(
         embedding_service = get_embedding_service()
         vector_dimension = embedding_service.get_dimension()
 
-        chunks_indexed = index_chunks(document_id, chunks)
+        chunks_indexed = await run_in_threadpool(
+            index_chunks, document_id, chunks
+        )
 
         # Update metadata status to indexed
         from app.services import metadata_service

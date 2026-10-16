@@ -1,5 +1,3 @@
-from huggingface_hub.inference._generated.types import zero_shot_image_classification
-from huggingface_hub.inference._generated.types import zero_shot_image_classification
 import numpy as np
 from typing import List
 from app.config import get_settings
@@ -34,7 +32,12 @@ class EmbeddingService:
 
         try:
             # Generate embeddings
-            embeddings = self.model.encode(texts, convert_to_numpy=True)
+            embeddings = self.model.encode(
+                texts,
+                batch_size=8,
+                show_progress_bar=False,
+                convert_to_numpy=True,
+            )
             embeddings = np.array(embeddings, dtype=np.float32)
 
             if len(embeddings.shape) == 1:
