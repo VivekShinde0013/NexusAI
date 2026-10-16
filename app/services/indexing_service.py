@@ -3,6 +3,10 @@ from app.services.chunking_service import Chunk
 from app.services.embedding_service import get_embedding_service
 from app.services.vector_store import get_vector_store
 from app.config import get_settings
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 
 def index_chunks(document_id: str, chunks: List[Chunk]) -> int:
@@ -28,12 +32,17 @@ def index_chunks(document_id: str, chunks: List[Chunk]) -> int:
 
     # 3. Generate L2-normalized embeddings
     texts = [c.text for c in valid_chunks]
+    logger.info("INDEX: Starting document indexing")
+
+    logger.info("INDEX: Generating embeddings for %d chunks", len(texts))
     embeddings = embedding_service.generate_embeddings(texts)
+    logger.info("INDEX: Embeddings generated successfully")
 
-    # 4. Add to vector store and persist
     store.add_chunks(valid_chunks, embeddings)
-    store.save(settings.get_vector_store_path())
+    logger.info("INDEX: Vectors added to FAISS")
 
+    store.save(settings.get_vector_store_path())
+    logger.info("INDEX: FAISS index saved successfully")
     # 5. Sync metadata status to indexed if metadata exists
     try:
         from app.services import metadata_service
